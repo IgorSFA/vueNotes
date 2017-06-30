@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Notemaster</title>
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.css">
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-material"></script>
+</head>
+<body>
+	<div id="app">
+    <md-toolbar>
+      <h1 class="md-title">{{title}}</h1>
+    </md-toolbar>
+    <md-layout>
+      <md-input-container>
+        <label>Note title</label>
+        <md-input v-model="note.title"></md-input>
+      </md-input-container>
+      <md-input-container>
+        <label>Note text</label>
+        <md-textarea v-model="note.text"></md-textarea>
+      </md-input-container>
+      <md-button @click="addNote" class="md-raised md-accent">Save note</md-button>
+    </md-layout>
+    <md-layout md-row>
+      <md-card md-column v-for="(note, index) in notes">
+        <md-card-header>
+          <div class="md-title">{{note.title}}</div>
+          <div class="md-subhead">{{note.date}}</div>
+        </md-card-header>
+        <md-card-content>{{note.text}}</md-card-content>
+        <md-card-actions><md-button @click="removeNote(index)">Remove</md-button></md-card-actions>
+      </md-card>
+    </md-layout>
+  </div>
+
+  <script>
+    Vue.use(VueMaterial)
+    let browserNotes = []
+    const app = new Vue({
+      el: '#app',
+      data: {
+        title: 'NoteMaster',
+        note: {
+          title: '',
+          text: ''
+        },
+        notes: browserNotes
+      },
+      methods: {
+        addNote() {
+          let {title, text} = this.note
+          this.notes.push({
+            text, 
+            title, 
+            date: new Date(Date.now()).toLocaleString() 
+          })
+          localStorage.setItem('notes', this.notes)
+        },
+        removeNote(index) {
+          this.notes.splice(index, 1)
+          localStorage.setItem('notes', this.notes)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
